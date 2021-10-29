@@ -1,2 +1,2 @@
-# rageblog
-fxxk all the blogs!!!
+# Rage Blog!
+# fxxk all the blogs !!!
