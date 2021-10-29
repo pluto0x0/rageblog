@@ -50,14 +50,16 @@
   <div id="app">
     <div v-if="posts.length">
       <div v-for="post in posts">
-        <a :href="'/?' + post[0]">{{ post[1] }}</a>
+        <a :href="'/?' + post.name">{{ post.name }}</a>
       </div>
     </div>
     <div v-if="article" v-html="replace2(marked(replace1(article)))">
     </div>
   </div>
   <script>
-
+    POST_PATH = 'pluto0x0/rageblog';
+  </script>
+  <script>
     app = new Vue({
       el: '#app',
       data: {
@@ -83,14 +85,12 @@
     id = /\?(.+)$/.exec(window.location.href);
     if (id) {
       id = id[1];
-      axios.get(`/posts/${id}.md`).then(res => {
+      axios.get(`/posts/${id}`).then(res => {
         app.article = res.data;
-        // hljs.highlightBlock(document.getElementById("app"));
-        console.log(res);
       });
     }
     else {
-      axios.get('posts.json').then(res => {
+      axios.get('https://api.github.com/repos/' + POST_PATH + '/contents/posts').then(res => {
         app.posts = res.data;
         console.log(res.data);
       });
