@@ -1,2 +1,2 @@
-<span style="font-size: 300px; color:red;">Rage Blog!</span>
+# Rage Blog!
 # fxxk all the blogs !!!
