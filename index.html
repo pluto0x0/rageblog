@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Rage Blog</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked@3.0.7/lib/marked.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/github.min.css">
+  <script>
+
+  </script>
+  <script>
+    marked.setOptions({
+      highlight: function (code, lang, callback) {
+        return hljs.highlight(lang, code).value;
+      },
+      langPrefix: 'hljs ',
+      pedantic: false,
+      gfm: true,
+      tables: true,
+      breaks: false,
+      sanitize: false,
+      smartLists: true,
+      smartypants: false,
+      xhtml: false
+    });
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios@0.23.0/dist/axios.min.js"></script>
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+</head>
+
+<body style="margin: 1cm">
+  <h1>This is Rage Blog.</h1>
+  <a href="/">HOME</a>
+  <br>
+  <img src="https://i.loli.net/2021/10/29/NnGISEKtfdH8jV6.png" alt="fuck you" style="width: 20%;">
+  <div id="app">
+    <div v-if="posts.length">
+      <div v-for="post in posts">
+        <a :href="'/?' + post[0]">{{ post[1] }}</a>
+      </div>
+    </div>
+    <div v-if="article" v-html="replace2(marked(replace1(article)))">
+    </div>
+  </div>
+  <script>
+
+    app = new Vue({
+      el: '#app',
+      data: {
+        posts: [],
+        article: ''
+      },
+      methods: {
+        replace1: function (x) {
+          x = x.replaceAll(/^\s*?\$\$([\s\S]+?)\$\$\s*?$/gm, "\n$$$$$$$$$1$$$$$$$$\n");
+          x = x.replaceAll("$$", "$");
+          x = x.replace(/\$\$?[\s\S]+?\$?\$/g, "`$&`");
+          console.log(x);
+          return x;
+        },
+        replace2: function (x) {
+          x = x.replace(/<code>(\$\$?[\s\S]+?\$?\$)<\/code>/g, "$1");
+          console.log(x);
+          return x;
+        }
+      }
+    });
+
+    id = /\?(.+)$/.exec(window.location.href);
+    if (id) {
+      id = id[1];
+      axios.get(`/posts/${id}.md`).then(res => {
+        app.article = res.data;
+        // hljs.highlightBlock(document.getElementById("app"));
+        console.log(res);
+      });
+    }
+    else {
+      axios.get('posts.json').then(res => {
+        app.posts = res.data;
+        console.log(res.data);
+      });
+    }
+  </script>
+</body>
+
+</html>
