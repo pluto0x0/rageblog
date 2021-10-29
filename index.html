@@ -31,7 +31,8 @@
   <script>
     MathJax = {
       tex: {
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
       },
       svg: {
         fontCache: 'global'
@@ -46,7 +47,7 @@
   <h1>This is Rage Blog.</h1>
   <a href="/">HOME</a>
   <br>
-  <img src="https://i.loli.net/2021/10/29/NnGISEKtfdH8jV6.png" alt="fuck you" style="width: 20%;">
+  <img src="logo.png" alt="fuck you" style="width: 20%;">
   <div id="app">
     <div v-if="posts.length">
       <div v-for="post in posts">
@@ -71,13 +72,18 @@
           x = x.replaceAll(/^\s*?\$\$([\s\S]+?)\$\$\s*?$/gm, "\n$$$$$$$$$1$$$$$$$$\n");
           x = x.replaceAll("$$", "$");
           x = x.replace(/\$\$?[\s\S]+?\$?\$/g, "`$&`");
-          console.log(x);
           return x;
         },
         replace2: function (x) {
           x = x.replace(/<code>(\$\$?[\s\S]+?\$?\$)<\/code>/g, "$1");
-          console.log(x);
           return x;
+        }
+      },
+      updated() {
+        const MathJax = window.MathJax;
+        if (MathJax) {
+          MathJax.typesetPromise && MathJax.typesetPromise();
+          console.log('mj.');
         }
       }
     });
@@ -85,6 +91,7 @@
     id = /\?(.+)$/.exec(window.location.href);
     if (id) {
       id = id[1];
+      document.title += ' - ' + decodeURI(id);
       axios.get(`https://raw.githubusercontent.com/${POST_PATH}/main/posts/${id}`).then(res => {
         app.article = res.data;
       });
@@ -92,7 +99,6 @@
     else {
       axios.get('https://api.github.com/repos/' + POST_PATH + '/contents/posts').then(res => {
         app.posts = res.data;
-        console.log(res.data);
       });
     }
   </script>
