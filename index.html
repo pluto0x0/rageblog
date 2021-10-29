@@ -85,7 +85,7 @@
     id = /\?(.+)$/.exec(window.location.href);
     if (id) {
       id = id[1];
-      axios.get(`/posts/${id}`).then(res => {
+      axios.get(`https://raw.githubusercontent.com/${POST_PATH}/main/posts/${id}`).then(res => {
         app.article = res.data;
       });
     }
