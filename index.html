@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/marked@3.0.7/lib/marked.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/github.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.0.0/github-markdown.min.css">
   <script>
 
   </script>
@@ -56,7 +57,7 @@
         <a :href="'/?' + post.name">{{ post.name }}</a>
       </div>
     </div>
-    <div v-if="article" v-html="replace2(marked(replace1(article)))">
+    <div v-if="article" v-html="replace2(marked(replace1(article)))" class='markdown-body'>
     </div>
   </div>
   <script>
