@@ -5,7 +5,7 @@
 ### h3
 <https://www.google.com>
 
-![google](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png}
+![google](https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png)
 
 ```cpp
 #include <cstdio>
