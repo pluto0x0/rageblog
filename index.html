@@ -22,6 +22,7 @@
     }
   </script>
   <!-- configuration end -->
+
   <link rel="icon" type="image/x-icon" id="icon0">
   <link rel="shortcut icon" type="image/x-icon" id="icon1">
   <script src="https://cdn.jsdelivr.net/npm/marked@3.0.7/lib/marked.min.js"></script>
@@ -119,7 +120,7 @@
     }
 
     #list {
-      font-size: xx-large;
+      font-size: larger;
       width: 80%;
       margin: auto;
     }
@@ -142,12 +143,7 @@
     }
 
     .aa:hover::before {
-      /* text-shadow: .3em .3em 10px darkgray; */
-      /* position: relative; */
       content: ">";
-    }
-    .aa:hover {
-      /* text-shadow: .3em .3em 30px darkgray; */
     }
 
     h1#title:hover {
@@ -156,13 +152,8 @@
 
     div.flex {
       display: -webkit-flex;
-      /* display: flex; */
-      /* width: 15%; */
     }
 
-    body{
-      /* text-shadow: .3em .3em 10px darkgray; */
-    }
     .sociallink {
       margin-bottom: .5cm;
       margin-top: .5cm;
@@ -196,14 +187,17 @@
           <div v-if="posts.length">
             <table id="list" style="margin-bottom: 10em;">
               <tr v-for="(post,index) in posts" style="font-weight: bold;">
-                <td class="index" style=" color: grey;">{{ index }}</td>
+                <td class="index" style=" color: grey;">#{{ index }}</td>
                 <td>
-                  <a :href="'/?' + post.name" class="aa">{{ post.name }}</a>
+                  <a :href="'/?' + post.name" class="aa">{{ getName(post.name) }}</a>
                 </td>
               </tr>
             </table>
           </div>
-          <div v-if="article" v-html="replace2(marked(replace1(article)))" class='markdown-body' style="margin-bottom: 10em;">
+          <div v-if="article">
+            <h1 class="head">{{ getName(title) }}</h2>
+            <div  v-html="replace2(marked(replace1(article)))" class='markdown-body'   style="margin-bottom: 10em;">
+            </div>
           </div>
           <div style="text-align: center;">💢Rage Blog.</div>
         </div>
@@ -220,7 +214,8 @@
       data: {
         posts: [],
         article: '',
-        conf: site
+        conf: site,
+        title: ''
       },
       methods: {
         replace1: function (x) {
@@ -232,6 +227,9 @@
         replace2: function (x) {
           x = x.replace(/<code>(\$\$?[\s\S]+?\$?\$)<\/code>/g, "$1");
           return x;
+        },
+        getName: function(x){
+          return x.replace(/\.[^\.]*$/, '');
         }
       },
       updated() {
@@ -245,8 +243,9 @@
 
     id = /\?(.+)$/.exec(window.location.href);
     if (id) {
-      id = id[1];
-      document.title += ' - ' + decodeURI(id);
+      id = decodeURI(id[1]);
+      app.title = id;
+      document.title += ' - ' + id;
       axios.get(`https://raw.githubusercontent.com/${app.conf.POST_PATH}/main/posts/${id}`).then(res => {
         app.article = res.data;
       });
