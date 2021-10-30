@@ -3,22 +3,36 @@
 
 <head>
   <meta charset="utf-8" />
-  <title>Rage Blog</title>
-  <link rel="icon" href="logo.png" type="image/x-icon">
-  <link rel="shortcut icon" href="logo.png" type="image/x-icon">
+
+  <!-- configuration start -->
+  <script>
+    site = {
+      POST_PATH: 'pluto0x0/rageblog',
+      title: 'Rage Blog',
+      description: 'Less is More.',
+      author: 'yzf',
+      logo: 'logo.png',
+      favicon: 'logo.png',
+      socialMedia: {
+        github: 'pluto0x0',
+        email: 'ying.zf@foxmail.com',
+        site: 'https://yzzzf.xyz/'
+      }
+    }
+  </script>
+  <!-- configuration end -->
+  <link rel="icon" type="image/x-icon" id="icon0">
+  <link rel="shortcut icon" type="image/x-icon" id="icon1">
   <script src="https://cdn.jsdelivr.net/npm/marked@3.0.7/lib/marked.min.js"></script>
   <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/highlight.min.js"></script>
   <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.3.1/build/styles/github.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@5.0.0/github-markdown.min.css">
   <script>
-
-  </script>
-  <script>
     marked.setOptions({
       highlight: function (code, lang, callback) {
         return hljs.highlight(lang, code).value;
       },
-      langPrefix: 'hljs ',
+      langPrefix: 'hljs',
       pedantic: false,
       gfm: true,
       tables: true,
@@ -43,32 +57,168 @@
     };
   </script>
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <style>
+    body {
+      margin: auto;
+    }
+
+    /* Dark Mode */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background: #0d1117;
+        color: white;
+      }
+
+      .aa {
+        color: white;
+      }
+    }
+
+    /* Light Mode */
+    @media (prefers-color-scheme: light) {
+      body {
+        background: white;
+        color: black;
+      }
+
+      .aa {
+        color: black;
+      }
+    }
+
+    @media screen and (orientation:landscape) {
+      body {
+        width: 60%;
+      }
+
+      #about {
+        margin-top: 1em;
+        width: 20%;
+        font-size: larger;
+      }
+
+      #main {
+        width: 80%;
+      }
+    }
+
+    @media screen and (orientation:portrait) {
+      body {
+        width: 90%;
+      }
+
+      #about {
+        width: 0%;
+      }
+
+      #main {
+        width: 100%;
+      }
+    }
+
+    #list {
+      font-size: xx-large;
+      width: 80%;
+      margin: auto;
+    }
+
+    .head {
+      font-family: 'Courier New', '微软雅黑', Courier, monospace;
+    }
+
+    #list td {
+      padding-top: .5em;
+      padding-bottom: .5em;
+    }
+
+    #list td.index {
+      width: 2em;
+    }
+
+    .aa {
+      text-decoration: none;
+    }
+
+    .aa:hover::before {
+      /* text-shadow: .3em .3em 10px darkgray; */
+      /* position: relative; */
+      content: ">";
+    }
+    .aa:hover {
+      /* text-shadow: .3em .3em 30px darkgray; */
+    }
+
+    h1#title:hover {
+      cursor: pointer;
+    }
+
+    div.flex {
+      display: -webkit-flex;
+      /* display: flex; */
+      /* width: 15%; */
+    }
+
+    body{
+      /* text-shadow: .3em .3em 10px darkgray; */
+    }
+    .sociallink {
+      margin-bottom: .5cm;
+      margin-top: .5cm;
+      font-weight: bold;
+
+    }
+  </style>
   <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
 </head>
 
-<body style="margin: 1cm">
-  <h1>This is Rage Blog.</h1>
-  <a href="/">HOME</a>
-  <br>
-  <img src="logo.png" alt="fuck you" style="width: 20%;">
+<body>
   <div id="app">
-    <div v-if="posts.length">
-      <div v-for="post in posts">
-        <a :href="'/?' + post.name">{{ post.name }}</a>
+    <div class="head">
+      <h1 id="title" onclick="window.location.href='/'">{{ conf.title }}</h1>
+      <h2 style="margin-left: 1cm;">{{ conf.description }}</h2>
+      <div class="flex">
+        <div id="about">
+          <h3>Author:</h3>
+          <h2>{{ conf.author }}</h2>
+          <div style="margin-left: .8em;">
+
+            <div class="sociallink" v-if="conf.socialMedia.github"><a
+              :href="`https://github.com/${conf.socialMedia.github}`" class="aa">github</a><br></div>
+              <div class="sociallink" v-if="conf.socialMedia.email"><a :href="`mailto:${conf.socialMedia.email}`"
+                class="aa sociallink">email</a></div>
+                <div class="sociallink" v-if="conf.socialMedia.site"><a :href="`mailto:${conf.socialMedia.email}`"
+                  class="aa sociallink">site</a></div>
+                </div>
+        </div>
+        <div id="main" style="margin-top: 1.3em;">
+          <div v-if="posts.length">
+            <table id="list">
+              <tr v-for="(post,index) in posts" style="font-weight: bold;">
+                <td class="index" style=" color: grey;">{{ index }}</td>
+                <td>
+                  <a :href="'/?' + post.name" class="aa">{{ post.name }}</a>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <div v-if="article" v-html="replace2(marked(replace1(article)))" class='markdown-body' style="margin-bottom: 10em;">
+          </div>
+          <div style="text-align: center;">💢Rage Blog.</div>
+        </div>
       </div>
-    </div>
-    <div v-if="article" v-html="replace2(marked(replace1(article)))" class='markdown-body'>
     </div>
   </div>
   <script>
-    POST_PATH = 'pluto0x0/rageblog';
-  </script>
-  <script>
+    document.getElementById('icon0').href = site.favicon;
+    document.getElementById('icon1').href = site.favicon;
+    document.title = site.title;
+
     app = new Vue({
       el: '#app',
       data: {
         posts: [],
-        article: ''
+        article: '',
+        conf: site
       },
       methods: {
         replace1: function (x) {
@@ -86,7 +236,7 @@
         const MathJax = window.MathJax;
         if (MathJax) {
           MathJax.typesetPromise && MathJax.typesetPromise();
-          console.log('mj.');
+          console.log('Math rended');
         }
       }
     });
@@ -95,12 +245,13 @@
     if (id) {
       id = id[1];
       document.title += ' - ' + decodeURI(id);
-      axios.get(`https://raw.githubusercontent.com/${POST_PATH}/main/posts/${id}`).then(res => {
+      axios.get(`https://raw.githubusercontent.com/${app.conf.POST_PATH}/main/posts/${id}`).then(res => {
         app.article = res.data;
       });
     }
     else {
-      axios.get('https://api.github.com/repos/' + POST_PATH + '/contents/posts').then(res => {
+      document.title += ' - ' + site.description;
+      axios.get('https://api.github.com/repos/' + app.conf.POST_PATH + '/contents/posts').then(res => {
         app.posts = res.data;
       });
     }
