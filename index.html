@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=0">
 
   <!-- configuration start -->
   <script>
@@ -144,6 +145,13 @@
 
     .aa:hover::before {
       content: ">";
+      position: fixed;
+      /* right: 200%; */
+      transform: translateX(-100%);
+      /**右移元素**/
+      -ms-transform: translateX(-100%);
+      -webkit-transform: translateX(-100%);
+      /* font-size: smaller; */
     }
 
     h1#title:hover {
@@ -159,6 +167,27 @@
       margin-top: .5cm;
       font-weight: bold;
 
+    }
+
+    .post-time {
+      color: gray;
+      font-size: xx-small;
+    }
+
+    .post-time::before {
+      content: "@";
+    }
+
+    ::selection {
+      background: darkgray;
+    }
+
+    ::-moz-selection {
+      background: darkgray;
+    }
+
+    ::-webkit-selection {
+      background: darkgray;
     }
   </style>
   <!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
@@ -176,12 +205,12 @@
           <div style="margin-left: .8em;">
 
             <div class="sociallink" v-if="conf.socialMedia.github"><a
-              :href="`https://github.com/${conf.socialMedia.github}`" class="aa">github</a><br></div>
-              <div class="sociallink" v-if="conf.socialMedia.email"><a :href="`mailto:${conf.socialMedia.email}`"
+                :href="`https://github.com/${conf.socialMedia.github}`" class="aa">github</a><br></div>
+            <div class="sociallink" v-if="conf.socialMedia.email"><a :href="`mailto:${conf.socialMedia.email}`"
                 class="aa sociallink">email</a></div>
-                <div class="sociallink" v-if="conf.socialMedia.site"><a :href="`mailto:${conf.socialMedia.email}`"
-                  class="aa sociallink">site</a></div>
-                </div>
+            <div class="sociallink" v-if="conf.socialMedia.site"><a :href="conf.socialMedia.site"
+                class="aa sociallink">site</a></div>
+          </div>
         </div>
         <div id="main" style="margin-top: 1.3em;">
           <div v-if="posts.length">
@@ -189,15 +218,23 @@
               <tr v-for="(post,index) in posts" style="font-weight: bold;">
                 <td class="index" style=" color: grey;">#{{ index }}</td>
                 <td>
-                  <a :href="'/?' + post.name" class="aa">{{ getName(post.name) }}</a>
+                  <!-- <div> -->
+                  <a :href="'/?' + post.name" class="aa">{{ post.title }}</a>
+                  <!-- </div> -->
+                  <span class="post-time">
+                    {{post.time}}
+                  </span>
                 </td>
               </tr>
             </table>
           </div>
           <div v-if="article">
-            <h1 class="head">{{ getName(title) }}</h2>
-            <div  v-html="replace2(marked(replace1(article)))" class='markdown-body'   style="margin-bottom: 10em;">
-            </div>
+            <h1 class="head">{{ spName(post)[2] }}</h2>
+              <div class="post-time">
+                {{ spName(post)[1] }}
+              </div>
+              <div v-html="replace2(marked(replace1(article)))" class='markdown-body' style="margin-bottom: 10em;">
+              </div>
           </div>
           <div style="text-align: center;">💢Rage Blog.</div>
         </div>
@@ -205,17 +242,13 @@
     </div>
   </div>
   <script>
-    document.getElementById('icon0').href = site.favicon;
-    document.getElementById('icon1').href = site.favicon;
-    document.title = site.title;
-
-    app = new Vue({
+    var app = new Vue({
       el: '#app',
       data: {
         posts: [],
         article: '',
         conf: site,
-        title: ''
+        post: ''
       },
       methods: {
         replace1: function (x) {
@@ -228,8 +261,11 @@
           x = x.replace(/<code>(\$\$?[\s\S]+?\$?\$)<\/code>/g, "$1");
           return x;
         },
-        getName: function(x){
+        getName: function (x) {
           return x.replace(/\.[^\.]*$/, '');
+        },
+        spName: function (x) {
+          return /(\d+-\d+-\d+)-([^\.]*)\..+/.exec(x);
         }
       },
       updated() {
@@ -238,24 +274,37 @@
           MathJax.typesetPromise && MathJax.typesetPromise();
           console.log('Math rended');
         }
+      },
+      mounted() {
+        document.getElementById('icon0').href = site.favicon;
+        document.getElementById('icon1').href = site.favicon;
+        document.title = site.title;
+
+        let id = /\?(.+)$/.exec(window.location.href);
+        if (id) {
+          id = decodeURI(id[1]);
+          this.post = id;
+          document.title += ' - ' + id;
+          axios.get(`https://raw.githubusercontent.com/${this.conf.POST_PATH}/main/posts/${id}`).then(res => {
+            this.article = res.data;
+          });
+        }
+        else {
+          document.title += ' - ' + site.description;
+          axios.get('https://api.github.com/repos/' + this.conf.POST_PATH + '/contents/posts').then(res => {
+            this.posts = res.data.reverse();
+            for (i in this.posts) {
+              let name = this.spName(this.posts[i].name);
+              this.posts[i].time = name[1];
+              this.posts[i].title = name[2];
+              console.log(name);
+            }
+          });
+        }
       }
     });
 
-    id = /\?(.+)$/.exec(window.location.href);
-    if (id) {
-      id = decodeURI(id[1]);
-      app.title = id;
-      document.title += ' - ' + id;
-      axios.get(`https://raw.githubusercontent.com/${app.conf.POST_PATH}/main/posts/${id}`).then(res => {
-        app.article = res.data;
-      });
-    }
-    else {
-      document.title += ' - ' + site.description;
-      axios.get('https://api.github.com/repos/' + app.conf.POST_PATH + '/contents/posts').then(res => {
-        app.posts = res.data;
-      });
-    }
+
   </script>
 </body>
 
