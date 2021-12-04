@@ -30,6 +30,8 @@ $$ \prod_{i=1}^{n}c_i!\binom{\sum_{j=1}^{i-1}c_j+\lfloor c_i/2\rfloor}{\lfloor c
 
 因为多项式 $\exp$ 要求常数项为0，因此必须将一个 $e$ 提出来。
 
+结合指数生成函数 $\exp$ [的意义](https://oi-wiki.org/math/gen-func/egf/#_3)，不难发现 $a_n$ 即为就是 大小为 $n$ 的集合的分割数，即[Bell数](https://oeis.org/A000110)。 
+
 以下是求 $a_n$ （Bell数）的代码（$n=100$）,配合[多项式模板](/?2021-11-27-%E5%A4%9A%E9%A1%B9%E5%BC%8F%E6%A8%A1%E6%9D%BF.md)使用。
 
 ```cpp
