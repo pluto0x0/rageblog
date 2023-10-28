@@ -95,14 +95,16 @@ int main() {
     memset(ss, 0, sizeof(ss));
     memset(ss2, 0, sizeof(ss2));
     for (int i = 1; i <= n; i++) {
-        for(int v = a[i], l = 1, r = 1; l <= maxa; l = r + 1, v = a[i] / l, r = v ? a[i] / v : maxa) {
+        p[i] += sum(s, maxa) * a[i];
+        for(int v = a[i], l = 1, r = 1; v; l = r + 1, v = a[i] / l) {
+            r = a[i] / v;
             if (r - l < 24) {
                 int SS = 0, SS2 = 0;
                 for(int j = l; j <= r; j++) SS += ss[j], SS2 += ss2[j];
-                p[i] += ll(a[i]) * SS - ll(SS2) * v;
+                p[i] -= ll(SS2) * v;
             }
             else
-                p[i] += ll(a[i]) * S(s, l, r) - S(s2, l, r) * v;
+                p[i] -= S(s2, l, r) * v;
         }
         p[i] += sum(s2, maxa);
         for(int l = 0, r = a[i] - 1; l <= maxa; l = r + 1, r = min(l + a[i] - 1, maxa))
